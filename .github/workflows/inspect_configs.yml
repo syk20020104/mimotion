@@ -13,7 +13,7 @@ jobs:
       - name: Checkout codes
         uses: actions/checkout@v5
         with:
-          token: ${{ secrets.PAT }} #此处PAT需要申请，教程详见：README
+          token: ${{ secrets.PAT }}
 
       - name: 初始化Python
         uses: actions/setup-python@v6
@@ -22,13 +22,13 @@ jobs:
 
       - name: 开始
         env:
-            INSPECT_WECHAT_HOOK_KEY: ${{ secrets.INSPECT_WECHAT_HOOK_KEY }} # 指定微信通知的KEY
-            INSPECT_TELEGRAM_BOT_TOKEN: ${{ secrets.INSPECT_TELEGRAM_BOT_TOKEN }} # 指定telegram推送机器人的token
-            INSPECT_TELEGRAM_CHAT_ID: ${{ secrets.INSPECT_TELEGRAM_CHAT_ID }} # 指定telegram推送chatId
-            INSPECT_AES_KEY: ${{ secrets.INSPECT_AES_KEY }} # 指定打印加密数据的AES KEY
+            INSPECT_WECHAT_HOOK_KEY: ${{ secrets.INSPECT_WECHAT_HOOK_KEY }}
+            INSPECT_TELEGRAM_BOT_TOKEN: ${{ secrets.INSPECT_TELEGRAM_BOT_TOKEN }}
+            INSPECT_TELEGRAM_CHAT_ID: ${{ secrets.INSPECT_TELEGRAM_CHAT_ID }}
+            INSPECT_AES_KEY: ${{ secrets.INSPECT_AES_KEY }}
             CONFIG: ${{ secrets.CONFIG }}
             AES_KEY: ${{ secrets.AES_KEY }}
             PAT: ${{ secrets.PAT }}
         run: |
-          pip3 install requests pycryptodome
+          pip3 install requests pycryptodome pytz
           python3 inspect_configs.py
