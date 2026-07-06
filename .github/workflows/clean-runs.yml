@@ -8,19 +8,15 @@ jobs:
   clean:
     runs-on: ubuntu-latest
     steps:
-      # 官方自带安装gh工具，不用npm，不会报错
-      - name: 安装官方GitHub CLI gh
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.22'
-      - run: go install github.com/cli/cli/v2/cmd/gh@latest
+      # 官方一键安装gh
+      - name: Install GitHub CLI
+        run: |
+          sudo apt update && sudo apt install gh -y
 
       - name: 批量删除旧运行记录
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
         run: |
-          gh auth login --with-token $GH_TOKEN
-          # 删除7天前所有成功/失败/取消的运行记录
-          gh run list --repo $GH_REPO --status completed,failure,cancelled --created "<7d" --limit 100 \
+          # 直接删除7天前记录，gh自动识别token，无需auth login
+          gh run list --status completed,failure,cancelled --created "<7d" --limit 50 \
             --json databaseId -q '.[].databaseId' | xargs -I {} gh run delete {}
