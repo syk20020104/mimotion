@@ -1,3 +1,5 @@
+permissions:
+  contents: write
 name: Random Cron
 on:
   workflow_run:
@@ -25,4 +27,6 @@ jobs:
           git add .
           current=`TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M:%S'`
           git commit -m "[${current}] random cron trigger by ${{ github.event_name }}"
+          # 新增这一行，用你的PAT鉴权，解决403报错
+          git remote set-url origin https://${{ secrets.PAT }}@github.com/syk20020104/mimotion.git
           git push origin master
