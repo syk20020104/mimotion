@@ -1,0 +1,26 @@
+name: 自动清理Action运行记录
+on:
+  schedule:
+    # 每天凌晨UTC2点执行（北京时间10点）自动清理
+    - cron: '0 2 * * *'
+  workflow_dispatch: # 支持手动一键运行清理
+
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 安装GitHub CLI
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install -g @githubcli/cli
+
+      - name: 登录仓库权限
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh auth login --with-token $GH_TOKEN
+          # 删除7天前所有已完成/失败/取消的运行记录
+          gh run list --repo $GH_REPO --status completed,failure,cancelled --created "<7d" --limit 100 \
+            --json databaseId -q '.[].databaseId' | xargs -I {} gh run delete {}
